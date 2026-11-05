@@ -11,7 +11,7 @@
 <script>
 const $=s=>document.querySelector(s), KEY='study_coaching_planner_v1';
 let db=read(), sid=null, tid=null;
-function read(){try{const data=JSON.parse(localStorage.getItem(KEY))||{students:[]};const bad=v=>typeof v==='string'&&(/\\+esc\\s*\\(/.test(v)||/\\+\\s*\\[/.test(v)||/\\+\\s*['"`]\\s*\\+/.test(v));(data.students||[]).forEach(st=>(st.tests||[]).forEach(t=>{if(bad(t.title))t.title='';['goals','weak'].forEach(k=>Object.keys(t[k]||{}).forEach(x=>{if(bad(t[k][x]))t[k][x]=''}));['weeks','days'].forEach(k=>{t[k]=(t[k]||[]).map(v=>bad(v)?'':v)})}));return data}catch(e){return {students:[]}}}
+function read(){try{const data=JSON.parse(localStorage.getItem(KEY))||{students:[]};const bad=v=>typeof v==='string'&&(/\+esc\s*\(/.test(v)||/\+\s*\[/.test(v)||/\+\s*['"\`]\s*\+/.test(v));(data.students||[]).forEach(st=>(st.tests||[]).forEach(t=>{if(bad(t.title))t.title='';['goals','weak'].forEach(k=>Object.keys(t[k]||{}).forEach(x=>{if(bad(t[k][x]))t[k][x]=''}));['weeks','days'].forEach(k=>{t[k]=(t[k]||[]).map(v=>bad(v)?'':v)})}));return data}catch(e){return {students:[]}}}
 function save(){localStorage.setItem(KEY,JSON.stringify(db));list();msg('保存しました')}
 function msg(s){let e=$('#toast');e.textContent=s;e.style.display='block';setTimeout(()=>e.style.display='none',1600)}
 function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
