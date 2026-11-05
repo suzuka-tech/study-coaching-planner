@@ -3,7 +3,51 @@
 <style>
 :root{--ink:#202633;--muted:#687386;--line:#dfe4eb;--bg:#f4f6f8;--blue:#365f91;--soft:#edf3f9}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Yu Gothic",Meiryo,sans-serif}header{position:sticky;top:0;background:white;border-bottom:1px solid var(--line);padding:13px 18px;z-index:2}.top,.between{display:flex;justify-content:space-between;align-items:center;gap:10px}.top{max-width:1100px;margin:auto}.brand{font-weight:750}.brand small{display:block;color:var(--muted);font-size:11px;font-weight:400}.wrap{max-width:1100px;margin:20px auto;padding:0 15px 45px}.layout{display:grid;grid-template-columns:235px minmax(0,1fr);gap:16px}aside,.panel{background:white;border:1px solid var(--line);border-radius:13px}aside{padding:13px;height:max-content;position:sticky;top:78px}.panel{padding:18px;margin-bottom:14px}h2{font-size:18px;margin:0 0 13px}.hint,.sub{font-size:12px;color:var(--muted)}.sub{margin:-7px 0 13px}.list{display:grid;gap:7px;margin:10px 0}.student{background:white;border:1px solid var(--line);border-radius:8px;padding:10px;text-align:left}.student.active{border-color:var(--blue);background:var(--soft)}.student small{display:block;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:grid;gap:4px;min-width:0}.field.full{grid-column:1/-1}label{font-size:13px;font-weight:650;color:#465164}input,select,textarea{width:100%;min-width:0;padding:10px 11px;border:1px solid #ccd4df;border-radius:8px;font:inherit;color:var(--ink);background:white}textarea{min-height:66px}button{font:inherit;cursor:pointer}.btn{padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:white;color:var(--ink);font-weight:650}.primary{background:var(--blue);border-color:var(--blue);color:white}.danger{color:#a33}.small{font-size:12px;padding:6px 9px}.actions{display:flex;gap:7px;flex-wrap:wrap;align-items:center}.tag{background:var(--soft);color:#355a80;padding:3px 8px;border-radius:20px;font-size:11px}.card{border:1px solid var(--line);border-radius:9px;padding:11px;margin:9px 0}.weekhead{display:flex;justify-content:space-between;gap:8px;margin-bottom:7px}.days{display:grid;gap:8px}.day{display:grid;grid-template-columns:115px 1fr;gap:10px;border:1px solid var(--line);border-radius:9px;padding:10px}.day strong{font-size:13px}.day small{display:block;color:var(--muted)}.notice{background:#f6f8fb;border:1px solid var(--line);padding:10px;border-radius:8px;font-size:12px;color:#566174}.empty{color:var(--muted);padding:20px;text-align:center}#toast{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);background:#202633;color:white;padding:9px 15px;border-radius:20px;display:none}.modal-backdrop{position:fixed;inset:0;background:#17203388;z-index:10;display:grid;place-items:center;padding:18px}.modal{background:white;border-radius:14px;padding:20px;width:min(100%,380px);box-shadow:0 12px 40px #0003}.modal h2{margin:0 0 12px}.modal[hidden],.modal-backdrop[hidden]{display:none}
 @media(max-width:740px){.layout{grid-template-columns:1fr}aside{position:static}.list{grid-template-columns:repeat(2,minmax(0,1fr));max-height:170px;overflow:auto}.grid{grid-template-columns:1fr}.field.full{grid-column:auto}.panel{padding:14px}.day{grid-template-columns:1fr;gap:5px}.top{align-items:flex-start}.top .actions .btn{font-size:12px;padding:7px}}
-@media print{@page{size:A4;margin:12mm}body{background:white;font-size:9pt}header,aside,.no-print,#toast{display:none!important}.wrap{margin:0;padding:0}.layout{display:block}.panel{border:0;padding:0;margin:0 0 10px;break-inside:avoid}h2{font-size:13pt;border-bottom:1px solid #888;padding-bottom:4px}.card,.day{break-inside:avoid;padding:6px;margin:5px 0}.day{grid-template-columns:90px 1fr}input,textarea,select{border:0;border-bottom:1px solid #bbb;border-radius:0;padding:3px;font-size:9pt}textarea{min-height:30px}.print-title{display:block!important}.hint{font-size:8pt}}
+@media print{
+@page{size:A4;margin:10mm}
+body{background:#fff;font-size:8.5pt;line-height:1.3;color:#202633}
+header,aside,.no-print,#toast{display:none!important}
+.wrap{max-width:none;margin:0;padding:0}
+.layout{display:block}
+.print-page{width:100%;height:277mm;overflow:hidden;page-break-after:always;break-after:page}
+.print-page:last-child{page-break-after:auto;break-after:auto}
+.panel{border:0;border-radius:0;padding:0;margin:0 0 5mm;break-inside:avoid}
+h1{font-size:18pt;margin:0 0 2mm}
+h2{font-size:11pt;margin:0 0 2mm;padding:0 0 1.5mm;border-bottom:1px solid #9aa5b4}
+.sub,.hint{font-size:7.5pt;color:#596579;margin:0 0 2mm}
+.print-title{display:block!important;margin:0 0 4mm;padding:0 0 2mm;border-bottom:2px solid #365f91}
+.print-title p{margin:0;font-size:9pt}
+#app>.print-page-one>.panel:first-of-type .grid{grid-template-columns:1fr 1fr;gap:2mm 5mm}
+#app>.print-page-one .field{gap:1mm}
+#app>.print-page-one label{font-size:7.5pt}
+#app>.print-page-one input,#app>.print-page-one textarea{font-size:8pt;padding:1mm 1.5mm;min-height:0;height:auto;border:0;border-bottom:1px solid #c8ced8;border-radius:0;background:transparent}
+#app>.print-page-one #title{display:none}
+#app>.print-page-one .print-value{display:block;min-height:6mm;padding:1mm 1.5mm;border-bottom:1px solid #c8ced8;font-size:9pt}
+#app>.print-page-one #choices{display:none}
+#app>.print-page-one #subjectCards{display:grid;grid-template-columns:1fr 1fr;gap:1.5mm 3mm}
+#app>.print-page-one #subjectCards>.card{margin:0;padding:1.5mm 2mm;border:1px solid #d9dee6;border-radius:2mm;break-inside:avoid}
+#app>.print-page-one #subjectCards .between{margin-bottom:1mm}
+#app>.print-page-one #subjectCards b{font-size:8pt}
+#app>.print-page-one #subjectCards .field{display:grid;grid-template-columns:22mm 1fr;align-items:center;gap:1mm;margin-top:.5mm}
+#app>.print-page-one #subjectCards label{font-size:6.8pt;white-space:nowrap}
+#app>.print-page-one #subjectCards input{width:100%;font-size:7pt;padding:.5mm 1mm}
+#app>.print-page-one #weeks{display:grid;grid-template-columns:1fr 1fr;gap:2mm 3mm}
+#app>.print-page-one #weeks .card{margin:0;padding:2mm;border:1px solid #d9dee6;border-radius:2mm;break-inside:avoid}
+#app>.print-page-one #weeks .weekhead{margin-bottom:1mm}
+#app>.print-page-one #weeks .weekhead b{font-size:8pt}
+#app>.print-page-one #weeks .tag{font-size:6.5pt;padding:.5mm 1.5mm}
+#app>.print-page-one #weeks textarea{width:100%;height:15mm;min-height:15mm;resize:none;white-space:pre-wrap;overflow:hidden}
+#app>.print-page-one #duration{font-size:7pt;padding:1.5mm;margin-bottom:2mm}
+#app>.print-page-two{height:277mm;page-break-before:always;break-before:page}
+#app>.print-page-two h2{font-size:14pt;margin-bottom:2mm}
+#app>.print-page-two .sub{margin-bottom:5mm}
+#app>.print-page-two .days{display:grid;gap:3mm}
+#app>.print-page-two .day{grid-template-columns:34mm 1fr;gap:4mm;align-items:start;margin:0;padding:3mm;border:1px solid #d9dee6;border-radius:2mm;min-height:29mm;break-inside:avoid}
+#app>.print-page-two .day strong{font-size:9pt}
+#app>.print-page-two .day small{font-size:7pt}
+#app>.print-page-two .day textarea{height:22mm;min-height:22mm;resize:none;overflow:hidden;border:0;padding:1mm;font-size:8.5pt;white-space:pre-wrap}
+input,textarea,select{color:#202633}
+}
 .print-title{display:none}
 </style></head><body>
 <header><div class="top"><div class="brand">学習計画コーチング<small>生徒ごとのテスト対策・週間計画</small></div><div class="actions no-print"><button class="btn" id="export">データ書き出し</button><button class="btn" id="import">データ読み込み</button><input type="file" id="file" accept="application/json" hidden><button class="btn primary" id="pdf">PDFを出力</button></div></div></header>
@@ -50,11 +94,12 @@ function render(){
     ).join('')
     : '<p class="hint">上のボタンから今回のテストで使う科目を選択してください。</p>';
   let html='';
+  html+='<div class="print-page print-page-one">';
   html+='<div class="panel no-print"><div class="between"><h2>'+esc(s.name)+' さんの学習計画</h2><div class="actions"><button type="button" class="btn small" id="newTest">＋ 別のテスト</button><button type="button" class="btn small danger" id="delTest">このテストを削除</button></div></div>'+testSwitcher+'</div>';
-  html+='<div class="panel"><div class="print-title"><h1>テスト対策 学習計画表</h1><p>'+esc(s.name)+' さん</p></div><h2>1. テスト情報</h2><div class="grid"><div class="field full"><label>テスト名</label><input id="title" placeholder="例：2学期期末テスト"></div><div class="field"><label>テスト開始日</label><input id="start" type="date" value="'+esc(t.start||'')+'"></div><div class="field"><label>コーチング実施日</label><input id="coach" type="date" value="'+esc(t.coach||'')+'"></div></div></div>';
-  html+='<div class="panel"><h2>2. 科目別の目標</h2><p class="sub">今回のテストで使用する科目を選択し、目標と重点分野を記入します。</p><div class="actions no-print" id="choices">'+subjectChoices+'</div>'+subjectCards+'</div>';
+  html+='<div class="panel"><div class="print-title"><h1>テスト対策 学習計画表</h1><p>'+esc(s.name)+' さん</p></div><h2>1. テスト情報</h2><div class="grid"><div class="field full"><label>テスト名</label><input id="title" placeholder="例：2学期期末テスト"><span class="print-value" id="printTitle">'+esc(t.title||'')+'</span></div><div class="field"><label>テスト開始日</label><input id="start" type="date" value="'+esc(t.start||'')+'"></div><div class="field"><label>コーチング実施日</label><input id="coach" type="date" value="'+esc(t.coach||'')+'"></div></div></div>';
+  html+='<div class="panel"><h2>2. 科目別の目標</h2><p class="sub">今回のテストで使用する科目を選択し、目標と重点分野を記入します。</p><div class="actions no-print" id="choices">'+subjectChoices+'</div><div id="subjectCards">'+subjectCards+'</div></div>';
   html+='<div class="panel"><h2>3. テストまでの学習計画</h2><p class="sub">テストまでの期間に合わせて、最大4週間分の計画を作成します。</p><div class="notice" id="duration">今回の計画期間：'+weeks(t)+'週間分</div><div id="weeks">'+weekHTML(t)+'</div><div class="actions no-print"><button type="button" class="btn small" id="recalc">期間を再計算</button></div></div>';
-  html+='<div class="panel"><h2>4. 直近7日間の学習計画</h2><p class="sub">コーチング実施日から7日間の日付を表示します。</p><div class="days" id="days">'+daysHTML(t)+'</div></div>';
+  html+='</div><div class="print-page print-page-two"><div class="panel"><h2>4. 直近7日間の学習計画</h2><p class="sub">コーチング実施日から7日間の日付を表示します。</p><div class="days" id="days">'+daysHTML(t)+'</div></div></div>';
   html+='<div class="panel no-print"><div class="between"><div><h2>保存・PDF出力</h2><p class="hint">入力内容はこのブラウザ内に保存されます。</p></div><div class="actions"><button type="button" class="btn" id="save">保存する</button><button type="button" class="btn primary" id="print">PDFを出力</button></div></div><div class="notice">PDF出力後、印刷画面で「PDFに保存」を選択してください。</div></div>';
   $('#app').innerHTML=html;
   if($('#selectTest')) $('#selectTest').onchange=e=>{sync();tid=e.target.value;render()};
@@ -62,6 +107,8 @@ function render(){
   $('#delTest').onclick=()=>{if(confirm('このテスト計画を削除しますか？')){s.tests=s.tests.filter(x=>x.id!==tid);tid=s.tests[0]?.id||null;save();render()}};
   $('#title').oninput=e=>{
     t.title=e.target.value;
+    const printTitle=$('#printTitle');
+    if(printTitle) printTitle.textContent=t.title;
     const label=t.title.trim()||'テスト名未設定';
     const opt=$('#selectTest')?.querySelector('option[value="'+tid+'"]');
     if(opt) opt.textContent=label;
