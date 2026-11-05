@@ -11,7 +11,7 @@
 <script>
 const $=s=>document.querySelector(s), KEY='study_coaching_planner_v1';
 let db=read(), sid=null, tid=null;
-function read(){try{return JSON.parse(localStorage.getItem(KEY))||{students:[]}}catch(e){return {students:[]}}}
+function read(){try{const data=JSON.parse(localStorage.getItem(KEY))||{students:[]};const bad=v=>typeof v==='string'&&(/\\+esc\\s*\\(/.test(v)||/\\+\\s*\\[/.test(v)||/\\+\\s*['"`]\\s*\\+/.test(v));(data.students||[]).forEach(st=>(st.tests||[]).forEach(t=>{if(bad(t.title))t.title='';['goals','weak'].forEach(k=>Object.keys(t[k]||{}).forEach(x=>{if(bad(t[k][x]))t[k][x]=''}));['weeks','days'].forEach(k=>{t[k]=(t[k]||[]).map(v=>bad(v)?'':v)})}));return data}catch(e){return {students:[]}}}
 function save(){localStorage.setItem(KEY,JSON.stringify(db));list();msg('保存しました')}
 function msg(s){let e=$('#toast');e.textContent=s;e.style.display='block';setTimeout(()=>e.style.display='none',1600)}
 function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
@@ -36,9 +36,9 @@ function render(){
     $('#addTest').onclick=addTest;
     return;
   }
-  const testSwitcher = s.tests.length>1
+  const testSwitcher = (s.tests.length>1
     ? '<div class="field"><label>表示するテスト計画</label><select id="selectTest">'+s.tests.map(x=>'<option value="'+x.id+'" '+(x.id===tid?'selected':'')+'>'+esc(x.title||'テスト名未設定')+'</option>').join('')+'</select></div>'
-    : '<p class="hint">登録中のテスト：'+esc(t.title||'テスト名未設定')+'</p>';
+    : '') + '<p class="hint" id="currentTestName">登録中のテスト：'+esc(t.title||'テスト名未設定')+'</p>';
   const subjectChoices = ['国語','英語【文法】','英語【コミュ】','数学【数IA】','数学【数IIB】','数学【数III】','理科【物理】','理科【化学】','理科【生物】','社会','その他'].map(x=>
     '<button type="button" class="btn small '+(t.subjects.includes(x)?'primary':'')+'" data-sub="'+x+'">'+(t.subjects.includes(x)?'✓ ':'')+x+'</button>'
   ).join('');
@@ -51,7 +51,7 @@ function render(){
     : '<p class="hint">上のボタンから今回のテストで使う科目を選択してください。</p>';
   let html='';
   html+='<div class="panel no-print"><div class="between"><h2>'+esc(s.name)+' さんの学習計画</h2><div class="actions"><button type="button" class="btn small" id="newTest">＋ 別のテスト</button><button type="button" class="btn small danger" id="delTest">このテストを削除</button></div></div>'+testSwitcher+'</div>';
-  html+='<div class="panel"><div class="print-title"><h1>テスト対策 学習計画表</h1><p>'+esc(s.name)+' さん</p></div><h2>1. テスト情報</h2><div class="grid"><div class="field full"><label>テスト名</label><input id="title" '+((t.title||'')? 'value="'+esc(t.title)+'" ':'')+'placeholder="例：2学期期末テスト"></div><div class="field"><label>テスト開始日</label><input id="start" type="date" value="'+esc(t.start||'')+'"></div><div class="field"><label>コーチング実施日</label><input id="coach" type="date" value="'+esc(t.coach||'')+'"></div></div></div>';
+  html+='<div class="panel"><div class="print-title"><h1>テスト対策 学習計画表</h1><p>'+esc(s.name)+' さん</p></div><h2>1. テスト情報</h2><div class="grid"><div class="field full"><label>テスト名</label><input id="title" placeholder="例：2学期期末テスト"></div><div class="field"><label>テスト開始日</label><input id="start" type="date" value="'+esc(t.start||'')+'"></div><div class="field"><label>コーチング実施日</label><input id="coach" type="date" value="'+esc(t.coach||'')+'"></div></div></div>';
   html+='<div class="panel"><h2>2. 科目別の目標</h2><p class="sub">今回のテストで使用する科目を選択し、目標と重点分野を記入します。</p><div class="actions no-print" id="choices">'+subjectChoices+'</div>'+subjectCards+'</div>';
   html+='<div class="panel"><h2>3. テストまでの学習計画</h2><p class="sub">テストまでの期間に合わせて、最大4週間分の計画を作成します。</p><div class="notice" id="duration">今回の計画期間：'+weeks(t)+'週間分</div><div id="weeks">'+weekHTML(t)+'</div><div class="actions no-print"><button type="button" class="btn small" id="recalc">期間を再計算</button></div></div>';
   html+='<div class="panel"><h2>4. 直近7日間の学習計画</h2><p class="sub">コーチング実施日から7日間の日付を表示します。</p><div class="days" id="days">'+daysHTML(t)+'</div></div>';
@@ -62,8 +62,11 @@ function render(){
   $('#delTest').onclick=()=>{if(confirm('このテスト計画を削除しますか？')){s.tests=s.tests.filter(x=>x.id!==tid);tid=s.tests[0]?.id||null;save();render()}};
   $('#title').oninput=e=>{
     t.title=e.target.value;
+    const label=t.title.trim()||'テスト名未設定';
     const opt=$('#selectTest')?.querySelector('option[value="'+tid+'"]');
-    if(opt) opt.textContent=t.title||'テスト名未設定';
+    if(opt) opt.textContent=label;
+    const current=$('#currentTestName');
+    if(current) current.textContent='登録中のテスト：'+label;
   };
   function updateWeeks(){
     t.planWeeks=countWeeks(t);
