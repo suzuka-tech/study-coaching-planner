@@ -9,7 +9,7 @@ body{background:#fff;font-size:8.5pt;line-height:1.3;color:#202633}
 header,aside,.no-print,#toast{display:none!important}
 .wrap{max-width:none;margin:0;padding:0}
 .layout{display:block}
-.print-page{width:100%;height:270mm;overflow:hidden;page-break-after:auto;break-after:auto}
+.print-page{width:100%;height:auto;min-height:0;overflow:visible;page-break-after:auto;break-after:auto}
 #app>.print-page-one{page-break-after:always;break-after:page}
 .print-page:last-child{page-break-after:auto;break-after:auto}
 .panel{border:0;border-radius:0;padding:0;margin:0 0 5mm;break-inside:avoid}
@@ -17,7 +17,7 @@ h1{font-size:18pt;margin:0 0 2mm}
 h2{font-size:11pt;margin:0 0 2mm;padding:0 0 1.5mm;border-bottom:1px solid #9aa5b4}
 .sub,.hint{font-size:7.5pt;color:#596579;margin:0 0 2mm}
 .print-title{display:block!important;margin:0 0 5mm;padding:0 0 3mm;border-bottom:2px solid #365f91}
-.print-title h1{font-size:23pt;line-height:1.2;font-weight:750;margin:0 0 2mm;color:#202633}
+.print-title h1{font-size:18pt;line-height:1.2;font-weight:750;margin:0 0 2mm;color:#202633}
 .print-title p{margin:0;font-size:9pt;color:#596579}
 #app>.print-page-one .grid>.field.full{display:none}
 #app>.print-page-one>.panel:first-of-type .grid{grid-template-columns:1fr 1fr;gap:2mm 5mm}
@@ -43,14 +43,17 @@ h2{font-size:11pt;margin:0 0 2mm;padding:0 0 1.5mm;border-bottom:1px solid #9aa5
 #app>.print-page-one #weeks textarea{width:100%;height:15mm;min-height:15mm;resize:none;white-space:pre-wrap;overflow:hidden}
 #app>.print-page-one #duration{font-size:7pt;padding:1.5mm;margin-bottom:2mm}
 #app>.print-page-one{page-break-after:always;break-after:page}
-#app>.print-page-two{height:270mm;page-break-after:auto;break-after:auto}
+#app>.print-page-two{height:auto;min-height:0;page-break-after:auto;break-after:auto}
 #app>.print-page-two h2{font-size:14pt;margin-bottom:2mm}
 #app>.print-page-two .sub{margin-bottom:5mm}
 #app>.print-page-two .days{display:grid;gap:3mm}
 #app>.print-page-two .day{grid-template-columns:34mm 1fr;gap:4mm;align-items:start;margin:0;padding:3mm;border:1px solid #d9dee6;border-radius:2mm;min-height:29mm;break-inside:avoid}
 #app>.print-page-two .day strong{font-size:9pt}
 #app>.print-page-two .day small{font-size:7pt}
-#app>.print-page-two .day textarea{height:22mm;min-height:22mm;resize:none;overflow:hidden;border:0;padding:1mm;font-size:8.5pt;white-space:pre-wrap}
+#app>.print-page-two .day textarea{height:22mm;min-height:22mm;resize:none;overflow:visible;border:0;padding:1mm;font-size:8.5pt;white-space:pre-wrap}
+#app.many-subjects>.print-page-one{page-break-after:auto;break-after:auto}
+#app.many-subjects .weekly-page-break{page-break-before:always;break-before:page}
+#app.many-subjects>.print-page-two{page-break-before:always;break-before:page}
 input,textarea,select{color:#202633}
 }
 .print-title{display:none}.print-value{display:none}
@@ -101,7 +104,7 @@ function render(){
   let html='';
   html+='<div class="print-page print-page-one">';
   html+='<div class="panel no-print"><div class="between"><h2>'+esc(s.name)+' さんの学習計画</h2><div class="actions"><button type="button" class="btn small" id="newTest">＋ 別のテスト</button><button type="button" class="btn small danger" id="delTest">このテストを削除</button></div></div>'+testSwitcher+'</div>';
-  html+='<div class="panel"><div class="print-title"><h1 id="printTestTitle">'+esc(t.title||'')+'</h1><p>'+esc(s.name)+' さん</p></div><div class="grid"><div class="field full"><label>テスト名</label><input id="title" placeholder="例：2学期期末テスト"><span class="print-value" id="printTitle">'+esc(t.title||'')+'</span></div><div class="field"><label>テスト開始日</label><input id="start" type="date" value="'+esc(t.start||'')+'"></div><div class="field"><label>コーチング実施日</label><input id="coach" type="date" value="'+esc(t.coach||'')+'"></div></div></div>';
+  html+='<div class="panel"><div class="print-title"><h1 id="printTestTitle">'+esc(t.title?(t.title+"の計画表"):"計画表")+'</h1><p>'+esc(s.name)+' さん</p></div><div class="grid"><div class="field full"><label>テスト名</label><input id="title" placeholder="例：2学期期末テスト"><span class="print-value" id="printTitle">'+esc(t.title||'')+'</span></div><div class="field"><label>テスト開始日</label><input id="start" type="date" value="'+esc(t.start||'')+'"></div><div class="field"><label>コーチング実施日</label><input id="coach" type="date" value="'+esc(t.coach||'')+'"></div></div></div>';
   html+='<div class="panel"><h2>科目別の目標</h2><p class="sub">今回のテストで使用する科目を選択し、目標と重点分野を記入します。</p><div class="actions no-print" id="choices">'+subjectChoices+'</div><div id="subjectCards">'+subjectCards+'</div></div>';
   html+='<div class="panel"><h2>テストまでの学習計画</h2><p class="sub">テストまでの期間に合わせて、最大4週間分の計画を作成します。</p><div class="notice" id="duration">今回の計画期間：'+weeks(t)+'週間分</div><div id="weeks">'+weekHTML(t)+'</div><div class="actions no-print"><button type="button" class="btn small" id="recalc">期間を再計算</button></div></div>';
   html+='</div><div class="print-page print-page-two"><div class="panel"><h2>直近7日間の学習計画</h2><p class="sub">コーチング実施日から7日間の日付を表示します。</p><div class="days" id="days">'+daysHTML(t)+'</div></div></div>';
@@ -113,7 +116,7 @@ function render(){
   $('#title').oninput=e=>{
     t.title=e.target.value;
     const printTitle=$('#printTitle');
-    if(printTitle) printTitle.textContent=t.title;const printHeading=$('#printTestTitle');if(printHeading)printHeading.textContent=t.title;
+    if(printTitle) printTitle.textContent=t.title;const printHeading=$('#printTestTitle');if(printHeading)printHeading.textContent=t.title?(t.title+"の計画表"):"計画表";
     const label=t.title.trim()||'テスト名未設定';
     const opt=$('#selectTest')?.querySelector('option[value="'+tid+'"]');
     if(opt) opt.textContent=label;
@@ -168,7 +171,7 @@ function render(){
   }
   $('#save').onclick=()=>{sync();save()};
   $('#print').onclick=()=>{sync();window.print()};
-  window.onbeforeprint=sync;
+  window.onbeforeprint=()=>{sync();const many=t.subjects.length>=7;$("#app").classList.toggle("many-subjects",many);$("#weeks")?.closest(".panel")?.classList.toggle("weekly-page-break",many)};window.onafterprint=()=>{$("#app").classList.remove("many-subjects");$("#weeks")?.closest(".panel")?.classList.remove("weekly-page-break")};
 }
 $('#pdf').onclick=()=>{if(test())window.print()};
 $('#export').onclick=()=>{let a=document.createElement('a'),b=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});a.href=URL.createObjectURL(b);a.download='学習計画データ.json';a.click();URL.revokeObjectURL(a.href)};
