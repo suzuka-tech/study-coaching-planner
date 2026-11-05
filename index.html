@@ -171,11 +171,31 @@ function render(){
     document.querySelectorAll('[data-weak]').forEach(e=>t.weak[t.subjects[+e.dataset.weak]]=e.value);
   }
   $('#save').onclick=()=>{sync();save()};
-  $('#print').onclick=()=>{sync();window.print()};
+  $('#print').onclick=()=>{sync();requestPDF()};
   window.onbeforeprint=()=>{sync();const many=t.subjects.length>=7;$("#app").classList.toggle("many-subjects",many);$("#weeks")?.closest(".panel")?.classList.toggle("weekly-page-break",many)};window.onafterprint=()=>{$("#app").classList.remove("many-subjects");$("#weeks")?.closest(".panel")?.classList.remove("weekly-page-break")};
 }
-$('#pdf').onclick=()=>{if(test())window.print()};
+function requestPDF(){
+  if(!test()){msg('テスト計画を選択してください');return}
+  const standalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+  if(standalone){
+    const url = new URL(window.location.href);
+    url.searchParams.set('printInBrowser','1');
+    window.open(url.toString(),'_blank');
+    return;
+  }
+  window.print();
+}
+$('#pdf').onclick=requestPDF;
 $('#export').onclick=()=>{let a=document.createElement('a'),b=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});a.href=URL.createObjectURL(b);a.download='学習計画データ.json';a.click();URL.revokeObjectURL(a.href)};
 $('#import').onclick=()=>$('#file').click();$('#file').onchange=async e=>{try{let x=JSON.parse(await e.target.files[0].text());if(!Array.isArray(x.students))throw Error();db=x;sid=db.students[0]?.id||null;tid=student()?.tests[0]?.id||null;save();render()}catch(err){alert('正しいデータファイルを選択してください')}e.target.value=''};
 list();if(db.students.length){sid=db.students[0].id;tid=student().tests[0]?.id||null;render()}
+if(new URLSearchParams(window.location.search).get('printInBrowser')==='1'){
+  const guide=document.createElement('div');
+  guide.id='browserPrintGuide';
+  guide.style.cssText='position:fixed;inset:0;z-index:30;background:#17203399;display:grid;place-items:center;padding:20px';
+  guide.innerHTML='<section style="background:white;color:#202633;border-radius:14px;padding:22px;max-width:360px;width:100%;box-shadow:0 12px 40px #0003"><h2 style="margin:0 0 10px;font-size:18px">PDFとして保存</h2><p style="font-size:14px;line-height:1.6;margin:0 0 16px">Safariで開きました。下のボタンから印刷画面を開き、「PDFを保存」または共有メニューから保存してください。</p><div style="display:flex;gap:8px;justify-content:flex-end"><button id="closePrintGuide" style="padding:9px 13px;border:1px solid #ccd4df;border-radius:8px;background:white">閉じる</button><button id="startBrowserPrint" style="padding:9px 13px;border:0;border-radius:8px;background:#365f91;color:white;font-weight:650">印刷画面を開く</button></div></section>';
+  document.body.appendChild(guide);
+  document.getElementById('closePrintGuide').onclick=()=>guide.remove();
+  document.getElementById('startBrowserPrint').onclick=()=>{guide.remove();window.print()};
+}
 </script></body></html>
