@@ -175,6 +175,40 @@ function render(){
   $('#print').onclick=()=>{sync();requestPDF()};
   window.onbeforeprint=()=>{sync();const many=t.subjects.length>=7;$("#app").classList.toggle("many-subjects",many);$("#weeks")?.closest(".panel")?.classList.toggle("weekly-page-break",many)};window.onafterprint=()=>{$("#app").classList.remove("many-subjects");$("#weeks")?.closest(".panel")?.classList.remove("weekly-page-break")};
 }
+let pendingPDF=null;
+function showPDFReady(blob,filename){
+  pendingPDF={blob,filename};
+  document.getElementById('pdfReadyDialog')?.remove();
+  const modal=document.createElement('div');
+  modal.id='pdfReadyDialog';
+  modal.style.cssText='position:fixed;inset:0;z-index:10000;background:#17203399;display:grid;place-items:center;padding:20px';
+  modal.innerHTML='<section style="background:white;color:#202633;border-radius:14px;padding:22px;max-width:360px;width:100%;box-shadow:0 12px 40px #0003"><h2 style="margin:0 0 10px;font-size:18px">PDFを作成しました</h2><p style="font-size:14px;line-height:1.6;margin:0 0 16px">共有メニューから「ファイルに保存」を選ぶか、PDFをダウンロードしてください。</p><div style="display:grid;gap:9px"><button id="shareReadyPDF" type="button" style="padding:11px;border:0;border-radius:8px;background:#365f91;color:white;font-weight:700">共有・ファイルに保存</button><button id="downloadReadyPDF" type="button" style="padding:11px;border:1px solid #ccd4df;border-radius:8px;background:white;color:#202633;font-weight:650">PDFをダウンロード</button><button id="closeReadyPDF" type="button" style="padding:8px;border:0;background:transparent;color:#687386">閉じる</button></div></section>';
+  document.body.appendChild(modal);
+  modal.querySelector('#shareReadyPDF').onclick=async()=>{
+    if(!pendingPDF)return;
+    const file=new File([pendingPDF.blob],pendingPDF.filename,{type:'application/pdf'});
+    try{
+      if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){
+        await navigator.share({files:[file],title:pendingPDF.filename});
+      }else{
+        downloadPendingPDF();
+      }
+    }catch(error){
+      if(error?.name!=='AbortError')alert('共有メニューを開けませんでした。「PDFをダウンロード」をお試しください。');
+    }
+  };
+  modal.querySelector('#downloadReadyPDF').onclick=downloadPendingPDF;
+  modal.querySelector('#closeReadyPDF').onclick=()=>modal.remove();
+}
+function downloadPendingPDF(){
+  if(!pendingPDF)return;
+  const url=URL.createObjectURL(pendingPDF.blob);
+  const a=document.createElement('a');a.href=url;a.download=pendingPDF.filename;a.style.display='none';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),60000);
+  msg('PDFのダウンロードを開始しました');
+  document.getElementById('pdfReadyDialog')?.remove();
+}
 async function requestPDF(){
   if(!test()){msg('テスト計画を選択してください');return}
   if(typeof html2pdf!=='function'){alert('PDF生成機能を読み込めませんでした。通信環境を確認して、もう一度お試しください。');return}
@@ -183,13 +217,13 @@ async function requestPDF(){
   const many=test().subjects.length>=7;
   clone.classList.toggle('many-subjects',many);
   clone.querySelectorAll('.no-print').forEach(e=>e.remove());
-  if(many) clone.querySelector('#weeks')?.closest('.panel')?.classList.add('weekly-page-break');
+  if(many)clone.querySelector('#weeks')?.closest('.panel')?.classList.add('weekly-page-break');
   const originalFields=source.querySelectorAll('input,textarea,select');
   const copiedFields=clone.querySelectorAll('input,textarea,select');
   originalFields.forEach((field,i)=>{
     const copy=copiedFields[i];if(!copy)return;
     if(field.tagName==='TEXTAREA')copy.textContent=field.value;
-    else if(field.tagName==='SELECT'){Array.from(copy.options).forEach((o,j)=>o.selected=field.options[j]?.selected)}
+    else if(field.tagName==='SELECT')Array.from(copy.options).forEach((o,j)=>o.selected=field.options[j]?.selected);
     else copy.setAttribute('value',field.value);
   });
   const baseRules=[],printRules=[];
@@ -202,20 +236,18 @@ async function requestPDF(){
   stage.style.cssText='position:fixed;inset:0;overflow:auto;background:#fff;z-index:9998;padding:0;display:flex;justify-content:center';
   clone.style.cssText='width:718px;max-width:none;margin:0;padding:0;background:#fff;flex:none';
   stage.appendChild(style);stage.appendChild(clone);document.body.appendChild(stage);
-  const busy=document.createElement('div');
-  busy.textContent='PDFを作成しています…';
+  const busy=document.createElement('div');busy.textContent='PDFを作成しています…';
   busy.style.cssText='position:fixed;inset:0;z-index:9999;background:#17203388;color:white;display:grid;place-items:center;font-weight:700;font-size:18px';
   document.body.appendChild(busy);
   try{
     if(document.fonts?.ready)await document.fonts.ready;
     const filename=(test().title||'学習計画表').replace(/[\\/:*?"<>|]/g,'_')+'.pdf';
-    const worker=html2pdf().set({margin:[10,10,10,10],filename,image:{type:'jpeg',quality:0.96},html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff',windowWidth:794,scrollX:0,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy']}}).from(clone);
-    const blob=await worker.outputPdf('blob');
-    const file=new File([blob],filename,{type:'application/pdf'});
-    if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]})))await navigator.share({files:[file],title:filename});
-    else{const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;a.style.display='none';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);msg('PDFを作成しました。ダウンロードを確認してください。')}
-  }catch(error){console.error(error);if(error?.name!=='AbortError')alert('PDFの作成に失敗しました。通信環境を確認して、もう一度お試しください。')}
-  finally{stage.remove();busy.remove()}
+    const blob=await html2pdf().set({margin:[10,10,10,10],filename,image:{type:'jpeg',quality:0.96},html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff',windowWidth:794,scrollX:0,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy']}}).from(clone).outputPdf('blob');
+    showPDFReady(blob,filename);
+  }catch(error){
+    console.error(error);
+    alert('PDFの作成に失敗しました。通信環境を確認して、もう一度お試しください。');
+  }finally{stage.remove();busy.remove()}
 }
 $('#pdf').onclick=requestPDF;
 $('#export').onclick=()=>{let a=document.createElement('a'),b=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});a.href=URL.createObjectURL(b);a.download='学習計画データ.json';a.click();URL.revokeObjectURL(a.href)};
