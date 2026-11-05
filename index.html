@@ -144,6 +144,7 @@ function render(){
     bindDays();
   };
   $('#choices').querySelectorAll('[data-sub]').forEach(b=>b.onclick=()=>{
+    sync();
     const x=b.dataset.sub;
     t.subjects=t.subjects.includes(x)?t.subjects.filter(y=>y!==x):t.subjects.concat(x);
     render();
