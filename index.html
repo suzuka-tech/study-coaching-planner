@@ -39,19 +39,19 @@ function render(){
   const testSwitcher = s.tests.length>1
     ? '<div class="field"><label>表示するテスト計画</label><select id="selectTest">'+s.tests.map(x=>'<option value="'+x.id+'" '+(x.id===tid?'selected':'')+'>'+esc(x.title||'テスト名未設定')+'</option>').join('')+'</select></div>'
     : '<p class="hint">登録中のテスト：'+esc(t.title||'テスト名未設定')+'</p>';
-  const subjectChoices = ['国語','数学','英語','理科','社会','その他'].map(x=>
+  const subjectChoices = ['国語','英語【文法】','英語【コミュ】','数学【数IA】','数学【数IIB】','数学【数III】','理科【物理】','理科【化学】','理科【生物】','社会','その他'].map(x=>
     '<button type="button" class="btn small '+(t.subjects.includes(x)?'primary':'')+'" data-sub="'+x+'">'+(t.subjects.includes(x)?'✓ ':'')+x+'</button>'
   ).join('');
   const subjectCards = t.subjects.length
     ? t.subjects.map((x,i)=>
       '<div class="card"><div class="between"><b>'+esc(x)+'</b><button type="button" class="btn small danger no-print" data-remove="'+i+'">削除</button></div>'+
-      '<div class="field"><label>目標（例：平均点より上を目指す）</label><input data-goal="'+i+'" value="'+esc(t.goals[x]||'')+'" placeholder="達成したい目標"></div>'+
-      '<div class="field"><label>重点・苦手分野（任意）</label><input data-weak="'+i+'" value="'+esc(t.weak[x]||'')+'" placeholder="重点的に復習する単元"></div></div>'
+      '<div class="field"><label>目標（例：平均点より上を目指す）</label><input data-goal="'+i+'" '+((t.goals[x]||'')? 'value="'+esc(t.goals[x])+'" ':'')+'placeholder="達成したい目標"></div>'+
+      '<div class="field"><label>重点・苦手分野（任意）</label><input data-weak="'+i+'" '+((t.weak[x]||'')? 'value="'+esc(t.weak[x])+'" ':'')+'placeholder="重点的に復習する単元"></div></div>'
     ).join('')
     : '<p class="hint">上のボタンから今回のテストで使う科目を選択してください。</p>';
   let html='';
   html+='<div class="panel no-print"><div class="between"><h2>'+esc(s.name)+' さんの学習計画</h2><div class="actions"><button type="button" class="btn small" id="newTest">＋ 別のテスト</button><button type="button" class="btn small danger" id="delTest">このテストを削除</button></div></div>'+testSwitcher+'</div>';
-  html+='<div class="panel"><div class="print-title"><h1>テスト対策 学習計画表</h1><p>'+esc(s.name)+' さん</p></div><h2>1. テスト情報</h2><div class="grid"><div class="field full"><label>テスト名</label><input id="title" value="'+esc(t.title||'')+'" placeholder="例：2学期期末テスト"></div><div class="field"><label>テスト開始日</label><input id="start" type="date" value="'+esc(t.start||'')+'"></div><div class="field"><label>コーチング実施日</label><input id="coach" type="date" value="'+esc(t.coach||'')+'"></div></div></div>';
+  html+='<div class="panel"><div class="print-title"><h1>テスト対策 学習計画表</h1><p>'+esc(s.name)+' さん</p></div><h2>1. テスト情報</h2><div class="grid"><div class="field full"><label>テスト名</label><input id="title" '+((t.title||'')? 'value="'+esc(t.title)+'" ':'')+'placeholder="例：2学期期末テスト"></div><div class="field"><label>テスト開始日</label><input id="start" type="date" value="'+esc(t.start||'')+'"></div><div class="field"><label>コーチング実施日</label><input id="coach" type="date" value="'+esc(t.coach||'')+'"></div></div></div>';
   html+='<div class="panel"><h2>2. 科目別の目標</h2><p class="sub">今回のテストで使用する科目を選択し、目標と重点分野を記入します。</p><div class="actions no-print" id="choices">'+subjectChoices+'</div>'+subjectCards+'</div>';
   html+='<div class="panel"><h2>3. テストまでの学習計画</h2><p class="sub">テストまでの期間に合わせて、最大4週間分の計画を作成します。</p><div class="notice" id="duration">今回の計画期間：'+weeks(t)+'週間分</div><div id="weeks">'+weekHTML(t)+'</div><div class="actions no-print"><button type="button" class="btn small" id="recalc">期間を再計算</button></div></div>';
   html+='<div class="panel"><h2>4. 直近7日間の学習計画</h2><p class="sub">コーチング実施日から7日間の日付を表示します。</p><div class="days" id="days">'+daysHTML(t)+'</div></div>';
