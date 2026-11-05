@@ -180,7 +180,12 @@ function requestPDF(){
   if(standalone){
     const url = new URL(window.location.href);
     url.searchParams.set('printInBrowser','1');
-    window.open(url.toString(),'_blank');
+    const overlay=document.createElement('div');
+    overlay.style.cssText='position:fixed;inset:0;z-index:40;background:#17203399;display:grid;place-items:center;padding:20px';
+    overlay.innerHTML='<section style="background:white;color:#202633;border-radius:14px;padding:22px;max-width:360px;width:100%;box-shadow:0 12px 40px #0003"><h2 style="margin:0 0 10px;font-size:18px">PDFとして保存</h2><p style="font-size:14px;line-height:1.6;margin:0 0 16px">ホーム画面アプリから直接印刷できない場合があります。Safariで開いてからPDFを保存してください。</p><div style="display:flex;gap:8px;justify-content:flex-end;align-items:center"><button id="cancelPDFOpen" type="button" style="padding:9px 13px;border:1px solid #ccd4df;border-radius:8px;background:white">キャンセル</button><a id="openPDFInSafari" style="display:inline-block;padding:9px 13px;border-radius:8px;background:#365f91;color:white;text-decoration:none;font-weight:650" target="_blank" rel="noopener">Safariで開く</a></div></section>';
+    document.body.appendChild(overlay);
+    overlay.querySelector('#openPDFInSafari').href=url.toString();
+    overlay.querySelector('#cancelPDFOpen').onclick=()=>overlay.remove();
     return;
   }
   window.print();
