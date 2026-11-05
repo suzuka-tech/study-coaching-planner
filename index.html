@@ -16,8 +16,10 @@ header,aside,.no-print,#toast{display:none!important}
 h1{font-size:18pt;margin:0 0 2mm}
 h2{font-size:11pt;margin:0 0 2mm;padding:0 0 1.5mm;border-bottom:1px solid #9aa5b4}
 .sub,.hint{font-size:7.5pt;color:#596579;margin:0 0 2mm}
-.print-title{display:block!important;margin:0 0 4mm;padding:0 0 2mm;border-bottom:2px solid #365f91}
-.print-title p{margin:0;font-size:9pt}
+.print-title{display:block!important;margin:0 0 5mm;padding:0 0 3mm;border-bottom:2px solid #365f91}
+.print-title h1{font-size:23pt;line-height:1.2;font-weight:750;margin:0 0 2mm;color:#202633}
+.print-title p{margin:0;font-size:9pt;color:#596579}
+#app>.print-page-one .grid>.field.full{display:none}
 #app>.print-page-one>.panel:first-of-type .grid{grid-template-columns:1fr 1fr;gap:2mm 5mm}
 #app>.print-page-one .field{gap:1mm}
 #app>.print-page-one label{font-size:7.5pt}
@@ -99,7 +101,7 @@ function render(){
   let html='';
   html+='<div class="print-page print-page-one">';
   html+='<div class="panel no-print"><div class="between"><h2>'+esc(s.name)+' さんの学習計画</h2><div class="actions"><button type="button" class="btn small" id="newTest">＋ 別のテスト</button><button type="button" class="btn small danger" id="delTest">このテストを削除</button></div></div>'+testSwitcher+'</div>';
-  html+='<div class="panel"><div class="print-title"><h1>テスト対策 学習計画表</h1><p>'+esc(s.name)+' さん</p></div><h2>1. テスト情報</h2><div class="grid"><div class="field full"><label>テスト名</label><input id="title" placeholder="例：2学期期末テスト"><span class="print-value" id="printTitle">'+esc(t.title||'')+'</span></div><div class="field"><label>テスト開始日</label><input id="start" type="date" value="'+esc(t.start||'')+'"></div><div class="field"><label>コーチング実施日</label><input id="coach" type="date" value="'+esc(t.coach||'')+'"></div></div></div>';
+  html+='<div class="panel"><div class="print-title"><h1 id="printTestTitle">'+esc(t.title||'')+'</h1><p>'+esc(s.name)+' さん</p></div><h2>1. テスト情報</h2><div class="grid"><div class="field full"><label>テスト名</label><input id="title" placeholder="例：2学期期末テスト"><span class="print-value" id="printTitle">'+esc(t.title||'')+'</span></div><div class="field"><label>テスト開始日</label><input id="start" type="date" value="'+esc(t.start||'')+'"></div><div class="field"><label>コーチング実施日</label><input id="coach" type="date" value="'+esc(t.coach||'')+'"></div></div></div>';
   html+='<div class="panel"><h2>2. 科目別の目標</h2><p class="sub">今回のテストで使用する科目を選択し、目標と重点分野を記入します。</p><div class="actions no-print" id="choices">'+subjectChoices+'</div><div id="subjectCards">'+subjectCards+'</div></div>';
   html+='<div class="panel"><h2>3. テストまでの学習計画</h2><p class="sub">テストまでの期間に合わせて、最大4週間分の計画を作成します。</p><div class="notice" id="duration">今回の計画期間：'+weeks(t)+'週間分</div><div id="weeks">'+weekHTML(t)+'</div><div class="actions no-print"><button type="button" class="btn small" id="recalc">期間を再計算</button></div></div>';
   html+='</div><div class="print-page print-page-two"><div class="panel"><h2>4. 直近7日間の学習計画</h2><p class="sub">コーチング実施日から7日間の日付を表示します。</p><div class="days" id="days">'+daysHTML(t)+'</div></div></div>';
@@ -111,7 +113,7 @@ function render(){
   $('#title').oninput=e=>{
     t.title=e.target.value;
     const printTitle=$('#printTitle');
-    if(printTitle) printTitle.textContent=t.title;
+    if(printTitle) printTitle.textContent=t.title;const printHeading=$('#printTestTitle');if(printHeading)printHeading.textContent=t.title;
     const label=t.title.trim()||'テスト名未設定';
     const opt=$('#selectTest')?.querySelector('option[value="'+tid+'"]');
     if(opt) opt.textContent=label;
