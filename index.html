@@ -60,7 +60,7 @@ input,textarea,select{color:#202633}
 </style></head><body>
 <header><div class="top"><div class="brand">学習計画コーチング<small>生徒ごとのテスト対策・週間計画</small></div><div class="actions no-print"><button class="btn" id="export">データ書き出し</button><button class="btn" id="import">データ読み込み</button><input type="file" id="file" accept="application/json" hidden><button class="btn primary" id="pdf">PDFを出力</button></div></div></header>
 <div class="wrap"><div class="layout"><aside class="no-print"><div class="between"><b>生徒一覧</b><button class="btn primary small" id="addStudent" type="button">＋ 生徒追加</button></div><div class="list" id="students"></div><p class="hint">生徒を選択して計画を管理します。</p></aside><main id="app"><div class="panel empty">生徒を追加してください。</div></main></div></div><div id="toast"></div><div class="modal-backdrop" id="studentModal" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="studentModalTitle"><h2 id="studentModalTitle">生徒を追加</h2><div class="field"><label for="studentName">生徒氏名</label><input id="studentName" type="text" autocomplete="name" placeholder="例：山田 花子"></div><div class="actions" style="justify-content:flex-end;margin-top:14px"><button class="btn" id="cancelStudent" type="button">キャンセル</button><button class="btn primary" id="confirmStudent" type="button">追加する</button></div></section></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js"></script>
+
 <script>
 const $=s=>document.querySelector(s), KEY='study_coaching_planner_v1';
 let db=read(), sid=null, tid=null, editingStudentId=null;
@@ -209,45 +209,11 @@ function downloadPendingPDF(){
   msg('PDFのダウンロードを開始しました');
   document.getElementById('pdfReadyDialog')?.remove();
 }
-async function requestPDF(){
+function requestPDF(){
   if(!test()){msg('テスト計画を選択してください');return}
-  if(typeof html2pdf!=='function'){alert('PDF生成機能を読み込めませんでした。通信環境を確認して、もう一度お試しください。');return}
-  const source=$('#app');
-  const clone=source.cloneNode(true);
-  const many=test().subjects.length>=7;
-  clone.classList.toggle('many-subjects',many);
-  clone.querySelectorAll('.no-print').forEach(e=>e.remove());
-  if(many)clone.querySelector('#weeks')?.closest('.panel')?.classList.add('weekly-page-break');
-  const originalFields=source.querySelectorAll('input,textarea,select');
-  const copiedFields=clone.querySelectorAll('input,textarea,select');
-  originalFields.forEach((field,i)=>{
-    const copy=copiedFields[i];if(!copy)return;
-    if(field.tagName==='TEXTAREA')copy.textContent=field.value;
-    else if(field.tagName==='SELECT')Array.from(copy.options).forEach((o,j)=>o.selected=field.options[j]?.selected);
-    else copy.setAttribute('value',field.value);
-  });
-  const baseRules=[],printRules=[];
-  function collectPrint(rules){for(const rule of rules){if(rule.type===CSSRule.MEDIA_RULE)collectPrint(rule.cssRules);else if(rule.type===CSSRule.STYLE_RULE||rule.type===CSSRule.FONT_FACE_RULE)printRules.push(rule.cssText)}}
-  function collect(rules){for(const rule of rules){if(rule.type===CSSRule.MEDIA_RULE){if(rule.conditionText.includes('print'))collectPrint(rule.cssRules)}else if(rule.type===CSSRule.STYLE_RULE||rule.type===CSSRule.FONT_FACE_RULE)baseRules.push(rule.cssText)}}
-  Array.from(document.styleSheets).forEach(sheet=>{try{collect(sheet.cssRules)}catch(e){}});
-  const style=document.createElement('style');
-  style.textContent=baseRules.join('\n')+'\n'+printRules.join('\n')+'\nbody{background:#fff!important;color:#202633!important}#app{display:block!important;width:718px!important;max-width:none!important;margin:0!important;padding:0!important}.print-page{width:100%!important;height:auto!important;min-height:0!important;overflow:visible!important}.print-page-two{height:auto!important;min-height:0!important}';
-  const stage=document.createElement('div');
-  stage.style.cssText='position:fixed;inset:0;overflow:auto;background:#fff;z-index:9998;padding:0;display:flex;justify-content:center';
-  clone.style.cssText='width:718px;max-width:none;margin:0;padding:0;background:#fff;flex:none';
-  stage.appendChild(style);stage.appendChild(clone);document.body.appendChild(stage);
-  const busy=document.createElement('div');busy.textContent='PDFを作成しています…';
-  busy.style.cssText='position:fixed;inset:0;z-index:9999;background:#17203388;color:white;display:grid;place-items:center;font-weight:700;font-size:18px';
-  document.body.appendChild(busy);
-  try{
-    if(document.fonts?.ready)await document.fonts.ready;
-    const filename=(test().title||'学習計画表').replace(/[\\/:*?"<>|]/g,'_')+'.pdf';
-    const blob=await html2pdf().set({margin:[10,10,10,10],filename,image:{type:'jpeg',quality:0.96},html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff',windowWidth:794,scrollX:0,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy']}}).from(clone).outputPdf('blob');
-    showPDFReady(blob,filename);
-  }catch(error){
-    console.error(error);
-    alert('PDFの作成に失敗しました。通信環境を確認して、もう一度お試しください。');
-  }finally{stage.remove();busy.remove()}
+  // Use Safari's native print engine so the PDF uses exactly the same A4
+  // layout and print CSS as Safari's 「プリント」 command.
+  window.print();
 }
 $('#pdf').onclick=requestPDF;
 $('#export').onclick=()=>{let a=document.createElement('a'),b=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});a.href=URL.createObjectURL(b);a.download='学習計画データ.json';a.click();URL.revokeObjectURL(a.href)};
