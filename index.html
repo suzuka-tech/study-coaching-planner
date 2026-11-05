@@ -27,24 +27,93 @@ function countWeeks(t){if(!t.start||!t.coach)return 4;let n=Math.ceil((date(t.st
 function weeks(t){return t.planWeeks||countWeeks(t)}
 function weekHTML(t){let n=weeks(t);return Array.from({length:n},(_,i)=>'<div class="card"><div class="weekhead"><b>第'+(i+1)+'週</b><span class="tag">'+(n-i===1?'テスト直前週':'テスト約'+(n-i)+'週間前')+'</span></div><textarea data-week="'+i+'" placeholder="この週に取り組む内容・達成目標">'+esc(t.weeks[i])+'</textarea></div>').join('')}
 function daysHTML(t){let d=t.coach?date(t.coach):new Date();return Array.from({length:7},(_,i)=>{let x=new Date(d);x.setDate(x.getDate()+i);return '<div class="day"><div><strong>'+fmt(x)+'</strong><small>'+(i===0?'コーチング当日':i===6?'次回コーチング前日':'学習日')+'</small></div><textarea data-day="'+i+'" placeholder="具体的な学習内容">'+esc(t.days[i])+'</textarea></div>'}).join('')}
-function render(){let s=student();if(!s)return;let t=test();if(!t){$('#app').innerHTML='<div class="panel"><div class="between"><h2>'+esc(s.name)+' さん</h2><button class="btn primary" id="addTest">＋ テスト計画を作成</button></div><p class="hint">テストごとに科目・目標・週間計画を保存できます。</p></div>';$('#addTest').onclick=addTest;return}
-$('#app').innerHTML=`<div class="panel no-print"><div class="between"><h2>'+esc(s.name)+' さんの計画</h2><div class="actions"><button class="btn small" id="newTest">＋ 別のテスト</button><button class="btn small danger" id="delTest">削除</button></div></div><div class="field"><label>テスト計画</label><select id="selectTest">'+s.tests.map(x=>'<option value="'+x.id+'" '+(x.id===tid?'selected':'')+'>'+esc(x.title||'名称未設定')+'</option>').join('')+'</select></div></div>
-<div class="panel"><div class="print-title"><h1>テスト対策 学習計画表</h1></div><h2>1. テスト・基本情報</h2><div class="grid"><div class="field"><label>生徒氏名</label><input id="name" value="'+esc(s.name)+'"></div><div class="field"><label>テスト名</label><input id="title" value="'+esc(t.title)+'" placeholder="例：2学期期末テスト"></div><div class="field"><label>テスト開始日</label><input id="start" type="date" value="'+t.start+'"></div><div class="field"><label>コーチング実施日</label><input id="coach" type="date" value="'+t.coach+'"></div></div></div>
-<div class="panel"><h2>2. 科目別の目標</h2><p class="sub">今回のテストで使用する科目を選択し、日本語で目標を記入します。</p><div class="actions no-print" id="choices">'+['国語','数学','英語','理科','社会','その他'].map(x=>'<button class="btn small '+(t.subjects.includes(x)?'primary':'')+'" data-sub="'+x+'">'+(t.subjects.includes(x)?'✓ ':'')+x+'</button>').join('')+'</div>'+ (t.subjects.length?t.subjects.map((x,i)=>'<div class="card"><div class="between"><b>'+x+'</b><button class="btn small danger no-print" data-remove="'+i+'">削除</button></div><div class="field"><label>目標（例：平均点より上を目指す）</label><input data-goal="'+i+'" value="'+esc(t.goals[x])+'"></div><div class="field"><label>重点・苦手分野（任意）</label><input data-weak="'+i+'" value="'+esc(t.weak[x])+'"></div></div>').join(''):'<p class="hint">科目を選択してください。</p>')+'</div>
-<div class="panel"><h2>3. テストまでの学習計画</h2><p class="sub">残り期間に合わせて最大4週間分を表示します。2週間前・1週間前からでも作成できます。</p><div class="notice" id="duration">今回の計画期間：'+weeks(t)+'週間分</div><div id="weeks">'+weekHTML(t)+'</div><div class="actions no-print"><button class="btn small" id="recalc">期間を再計算</button></div></div>
-<div class="panel"><h2>4. 今週の7日間学習計画</h2><p class="sub">コーチング実施日から7日間の曜日・日付を自動表示します。</p><div class="days" id="days">'+daysHTML(t)+'</div></div>
-<div class="panel no-print"><div class="between"><div><h2>保存・PDF出力</h2><p class="hint">入力内容はこのブラウザ内に保存されます。</p></div><div class="actions"><button class="btn" id="save">保存する</button><button class="btn primary" id="print">PDFを出力</button></div></div><div class="notice">PDF出力後、印刷画面で「PDFに保存」を選択してください。</div></div>`;
-$('#selectTest').onchange=e=>{tid=e.target.value;render()};$('#newTest').onclick=addTest;$('#delTest').onclick=()=>{if(confirm('このテスト計画を削除しますか？')){s.tests=s.tests.filter(x=>x.id!==tid);tid=s.tests[0]?.id||null;save();render()}};
-$('#name').onchange=e=>{s.name=e.target.value.trim()||s.name;save();render()};$('#title').oninput=e=>t.title=e.target.value;
-function updateWeeks(){t.planWeeks=countWeeks(t);t.weeks=Array.from({length:t.planWeeks},(_,i)=>t.weeks[i]||'');$('#duration').textContent='今回の計画期間：'+weeks(t)+'週間分';$('#weeks').innerHTML=weekHTML(t);bindWeeks()}
-function bindWeeks(){$('[data-week]')&&document.querySelectorAll('[data-week]').forEach(e=>e.oninput=()=>t.weeks[+e.dataset.week]=e.value)}
-$('#start').onchange=e=>{t.start=e.target.value;updateWeeks()};$('#coach').onchange=e=>{t.coach=e.target.value;updateWeeks();$('#days').innerHTML=daysHTML(t);bindDays()};
-$('#choices').querySelectorAll('[data-sub]').forEach(b=>b.onclick=()=>{let x=b.dataset.sub;t.subjects=t.subjects.includes(x)?t.subjects.filter(y=>y!==x):t.subjects.concat(x);render()});
-document.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{let x=t.subjects[+b.dataset.remove];t.subjects=t.subjects.filter(y=>y!==x);delete t.goals[x];delete t.weak[x];render()});
-document.querySelectorAll('[data-goal]').forEach(e=>e.oninput=()=>t.goals[t.subjects[+e.dataset.goal]]=e.value);document.querySelectorAll('[data-weak]').forEach(e=>e.oninput=()=>t.weak[t.subjects[+e.dataset.weak]]=e.value);
-$('#recalc').onclick=updateWeeks;bindWeeks();function bindDays(){document.querySelectorAll('[data-day]').forEach(e=>e.oninput=()=>t.days[+e.dataset.day]=e.value)}bindDays();
-$('#save').onclick=save;function sync(){t.title=$('#title').value;t.start=$('#start').value;t.coach=$('#coach').value;document.querySelectorAll('[data-week]').forEach(e=>t.weeks[+e.dataset.week]=e.value);document.querySelectorAll('[data-day]').forEach(e=>t.days[+e.dataset.day]=e.value);document.querySelectorAll('[data-goal]').forEach(e=>t.goals[t.subjects[+e.dataset.goal]]=e.value);document.querySelectorAll('[data-weak]').forEach(e=>t.weak[t.subjects[+e.dataset.weak]]=e.value)}
-$('#print').onclick=()=>{sync();window.print()};window.onbeforeprint=sync;
+function render(){
+  const s=student();
+  if(!s) return;
+  const t=test();
+  if(!t){
+    $('#app').innerHTML='<div class="panel"><div class="between"><h2>'+esc(s.name)+' さん</h2><button class="btn primary" id="addTest" type="button">＋ テスト計画を作成</button></div><p class="hint">テストごとに科目・目標・週間計画を保存できます。</p></div>';
+    $('#addTest').onclick=addTest;
+    return;
+  }
+  const testSwitcher = s.tests.length>1
+    ? '<div class="field"><label>表示するテスト計画</label><select id="selectTest">'+s.tests.map(x=>'<option value="'+x.id+'" '+(x.id===tid?'selected':'')+'>'+esc(x.title||'テスト名未設定')+'</option>').join('')+'</select></div>'
+    : '<p class="hint">登録中のテスト：'+esc(t.title||'テスト名未設定')+'</p>';
+  const subjectChoices = ['国語','数学','英語','理科','社会','その他'].map(x=>
+    '<button type="button" class="btn small '+(t.subjects.includes(x)?'primary':'')+'" data-sub="'+x+'">'+(t.subjects.includes(x)?'✓ ':'')+x+'</button>'
+  ).join('');
+  const subjectCards = t.subjects.length
+    ? t.subjects.map((x,i)=>
+      '<div class="card"><div class="between"><b>'+esc(x)+'</b><button type="button" class="btn small danger no-print" data-remove="'+i+'">削除</button></div>'+
+      '<div class="field"><label>目標（例：平均点より上を目指す）</label><input data-goal="'+i+'" value="'+esc(t.goals[x]||'')+'" placeholder="達成したい目標"></div>'+
+      '<div class="field"><label>重点・苦手分野（任意）</label><input data-weak="'+i+'" value="'+esc(t.weak[x]||'')+'" placeholder="重点的に復習する単元"></div></div>'
+    ).join('')
+    : '<p class="hint">上のボタンから今回のテストで使う科目を選択してください。</p>';
+  let html='';
+  html+='<div class="panel no-print"><div class="between"><h2>'+esc(s.name)+' さんの学習計画</h2><div class="actions"><button type="button" class="btn small" id="newTest">＋ 別のテスト</button><button type="button" class="btn small danger" id="delTest">このテストを削除</button></div></div>'+testSwitcher+'</div>';
+  html+='<div class="panel"><div class="print-title"><h1>テスト対策 学習計画表</h1><p>'+esc(s.name)+' さん</p></div><h2>1. テスト情報</h2><div class="grid"><div class="field full"><label>テスト名</label><input id="title" value="'+esc(t.title||'')+'" placeholder="例：2学期期末テスト"></div><div class="field"><label>テスト開始日</label><input id="start" type="date" value="'+esc(t.start||'')+'"></div><div class="field"><label>コーチング実施日</label><input id="coach" type="date" value="'+esc(t.coach||'')+'"></div></div></div>';
+  html+='<div class="panel"><h2>2. 科目別の目標</h2><p class="sub">今回のテストで使用する科目を選択し、目標と重点分野を記入します。</p><div class="actions no-print" id="choices">'+subjectChoices+'</div>'+subjectCards+'</div>';
+  html+='<div class="panel"><h2>3. テストまでの学習計画</h2><p class="sub">テストまでの期間に合わせて、最大4週間分の計画を作成します。</p><div class="notice" id="duration">今回の計画期間：'+weeks(t)+'週間分</div><div id="weeks">'+weekHTML(t)+'</div><div class="actions no-print"><button type="button" class="btn small" id="recalc">期間を再計算</button></div></div>';
+  html+='<div class="panel"><h2>4. 直近7日間の学習計画</h2><p class="sub">コーチング実施日から7日間の日付を表示します。</p><div class="days" id="days">'+daysHTML(t)+'</div></div>';
+  html+='<div class="panel no-print"><div class="between"><div><h2>保存・PDF出力</h2><p class="hint">入力内容はこのブラウザ内に保存されます。</p></div><div class="actions"><button type="button" class="btn" id="save">保存する</button><button type="button" class="btn primary" id="print">PDFを出力</button></div></div><div class="notice">PDF出力後、印刷画面で「PDFに保存」を選択してください。</div></div>';
+  $('#app').innerHTML=html;
+  if($('#selectTest')) $('#selectTest').onchange=e=>{sync();tid=e.target.value;render()};
+  $('#newTest').onclick=()=>{sync();addTest()};
+  $('#delTest').onclick=()=>{if(confirm('このテスト計画を削除しますか？')){s.tests=s.tests.filter(x=>x.id!==tid);tid=s.tests[0]?.id||null;save();render()}};
+  $('#title').oninput=e=>{
+    t.title=e.target.value;
+    const opt=$('#selectTest')?.querySelector('option[value="'+tid+'"]');
+    if(opt) opt.textContent=t.title||'テスト名未設定';
+  };
+  function updateWeeks(){
+    t.planWeeks=countWeeks(t);
+    t.weeks=Array.from({length:t.planWeeks},(_,i)=>t.weeks[i]||'');
+    $('#duration').textContent='今回の計画期間：'+weeks(t)+'週間分';
+    $('#weeks').innerHTML=weekHTML(t);
+    bindWeeks();
+  }
+  function bindWeeks(){
+    document.querySelectorAll('[data-week]').forEach(e=>e.oninput=()=>t.weeks[+e.dataset.week]=e.value);
+  }
+  function bindDays(){
+    document.querySelectorAll('[data-day]').forEach(e=>e.oninput=()=>t.days[+e.dataset.day]=e.value);
+  }
+  $('#start').onchange=e=>{t.start=e.target.value;updateWeeks()};
+  $('#coach').onchange=e=>{
+    t.coach=e.target.value;
+    updateWeeks();
+    $('#days').innerHTML=daysHTML(t);
+    bindDays();
+  };
+  $('#choices').querySelectorAll('[data-sub]').forEach(b=>b.onclick=()=>{
+    const x=b.dataset.sub;
+    t.subjects=t.subjects.includes(x)?t.subjects.filter(y=>y!==x):t.subjects.concat(x);
+    render();
+  });
+  document.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{
+    const x=t.subjects[+b.dataset.remove];
+    t.subjects=t.subjects.filter(y=>y!==x);
+    delete t.goals[x];
+    delete t.weak[x];
+    render();
+  });
+  document.querySelectorAll('[data-goal]').forEach(e=>e.oninput=()=>t.goals[t.subjects[+e.dataset.goal]]=e.value);
+  document.querySelectorAll('[data-weak]').forEach(e=>e.oninput=()=>t.weak[t.subjects[+e.dataset.weak]]=e.value);
+  $('#recalc').onclick=updateWeeks;
+  bindWeeks();
+  bindDays();
+  function sync(){
+    t.title=$('#title')?.value||t.title;
+    t.start=$('#start')?.value||'';
+    t.coach=$('#coach')?.value||'';
+    document.querySelectorAll('[data-week]').forEach(e=>t.weeks[+e.dataset.week]=e.value);
+    document.querySelectorAll('[data-day]').forEach(e=>t.days[+e.dataset.day]=e.value);
+    document.querySelectorAll('[data-goal]').forEach(e=>t.goals[t.subjects[+e.dataset.goal]]=e.value);
+    document.querySelectorAll('[data-weak]').forEach(e=>t.weak[t.subjects[+e.dataset.weak]]=e.value);
+  }
+  $('#save').onclick=()=>{sync();save()};
+  $('#print').onclick=()=>{sync();window.print()};
+  window.onbeforeprint=sync;
 }
 $('#pdf').onclick=()=>{if(test())window.print()};
 $('#export').onclick=()=>{let a=document.createElement('a'),b=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});a.href=URL.createObjectURL(b);a.download='学習計画データ.json';a.click();URL.revokeObjectURL(a.href)};
