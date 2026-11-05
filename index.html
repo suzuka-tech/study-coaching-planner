@@ -38,7 +38,7 @@ h2{font-size:11pt;margin:0 0 2mm;padding:0 0 1.5mm;border-bottom:1px solid #9aa5
 #app>.print-page-one #weeks .tag{font-size:6.5pt;padding:.5mm 1.5mm}
 #app>.print-page-one #weeks textarea{width:100%;height:15mm;min-height:15mm;resize:none;white-space:pre-wrap;overflow:hidden}
 #app>.print-page-one #duration{font-size:7pt;padding:1.5mm;margin-bottom:2mm}
-#app>.print-page-two{height:277mm;page-break-before:always;break-before:page}
+#app>.print-page-two{height:277mm}
 #app>.print-page-two h2{font-size:14pt;margin-bottom:2mm}
 #app>.print-page-two .sub{margin-bottom:5mm}
 #app>.print-page-two .days{display:grid;gap:3mm}
@@ -48,7 +48,7 @@ h2{font-size:11pt;margin:0 0 2mm;padding:0 0 1.5mm;border-bottom:1px solid #9aa5
 #app>.print-page-two .day textarea{height:22mm;min-height:22mm;resize:none;overflow:hidden;border:0;padding:1mm;font-size:8.5pt;white-space:pre-wrap}
 input,textarea,select{color:#202633}
 }
-.print-title{display:none}
+.print-title{display:none}.print-value{display:none}
 </style></head><body>
 <header><div class="top"><div class="brand">学習計画コーチング<small>生徒ごとのテスト対策・週間計画</small></div><div class="actions no-print"><button class="btn" id="export">データ書き出し</button><button class="btn" id="import">データ読み込み</button><input type="file" id="file" accept="application/json" hidden><button class="btn primary" id="pdf">PDFを出力</button></div></div></header>
 <div class="wrap"><div class="layout"><aside class="no-print"><div class="between"><b>生徒一覧</b><button class="btn primary small" id="addStudent" type="button" onclick="window.__openStudentDialog && window.__openStudentDialog()">＋ 生徒追加</button></div><div class="list" id="students"></div><p class="hint">生徒を選択して計画を管理します。</p></aside><main id="app"><div class="panel empty">生徒を追加してください。</div></main></div></div><div id="toast"></div><div class="modal-backdrop" id="studentModal" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="studentModalTitle"><h2 id="studentModalTitle">生徒を追加</h2><div class="field"><label for="studentName">生徒氏名</label><input id="studentName" type="text" autocomplete="name" placeholder="例：山田 花子"></div><div class="actions" style="justify-content:flex-end;margin-top:14px"><button class="btn" id="cancelStudent" type="button">キャンセル</button><button class="btn primary" id="confirmStudent" type="button">追加する</button></div></section></div>
