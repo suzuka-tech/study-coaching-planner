@@ -217,11 +217,11 @@ function downloadPendingPDF(){
   document.getElementById('pdfReadyDialog')?.remove();
 }
 async function requestPDF(){
+  if(!test()){msg('テスト計画を選択してください');return}
   const ua=navigator.userAgent||'';
   const safari=/Safari/i.test(ua)&&!/Chrome|CriOS|Edg|OPR|FxiOS|Firefox|Android/i.test(ua);
-  if(safari){window.print();return;}
-  if(!test()){msg('テスト計画を選択してください');return}
-  if(typeof html2pdf!=='function'){alert('PDF生成機能を読み込めませんでした。通信環境を確認して、もう一度お試しください。');return}
+  if(safari){window.print();return}
+  if(typeof html2pdf!=='function'){window.print();return}
   const source=$('#app');
   const clone=source.cloneNode(true);
   const many=test().subjects.length>=7;
