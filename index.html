@@ -180,9 +180,64 @@ function render(){
   }
   $('#save').onclick=()=>{sync();save()};
   $('#print').onclick=()=>{sync();requestPDF()};
-  window.onbeforeprint=()=>{sync();const many=t.subjects.length>=7;$("#app").classList.toggle("many-subjects",many);$("#weeks")?.closest(".panel")?.classList.toggle("weekly-page-break",many)};window.onafterprint=()=>{$("#app").classList.remove("many-subjects");$("#weeks")?.closest(".panel")?.classList.remove("weekly-page-break")};
+  window.onbeforeprint=()=>{sync();const many=t.subjects.length>=7;$("#app").classList.toggle("many-subjects",many);$("#weeks")?.closest(".panel")?.classList.toggle("weekly-page-break",many);fitWeeklyPDF($("#app"))};window.onafterprint=()=>{$("#app").classList.remove("many-subjects");$("#weeks")?.closest(".panel")?.classList.remove("weekly-page-break")};
 }
 let pendingPDF=null;
+function fitWeeklyPDF(root){
+  if(!root)return;
+  const canvas=document.createElement('canvas');
+  const ctx=canvas.getContext('2d');
+  const cards=Array.from(root.querySelectorAll('#weeks .card'));
+  let totalLines=0;
+  cards.forEach(card=>{
+    const area=card.querySelector('textarea[data-week]');
+    if(!area)return;
+    const cs=getComputedStyle(area);
+    const width=Math.max(40,area.clientWidth-parseFloat(cs.paddingLeft||0)-parseFloat(cs.paddingRight||0)-2);
+    const fontSize=parseFloat(cs.fontSize)||10;
+    const lineHeight=parseFloat(cs.lineHeight)||fontSize*1.25;
+    const value=area.value||area.textContent||'';
+    const countLines=size=>{
+      ctx.font=size+'px '+(cs.fontFamily||'sans-serif');
+      let count=0;
+      for(const paragraph of value.split('\n')){
+        if(!paragraph){count++;continue}
+        let line='';
+        for(const ch of paragraph){
+          const next=line+ch;
+          if(line&&ctx.measureText(next).width>width){count++;line=ch}else line=next;
+        }
+        count++;
+      }
+      return Math.max(1,count);
+    };
+    let lines=countLines(fontSize);
+    const compactFont=lines>12?6.6:lines>8?7.1:fontSize;
+    if(compactFont!==fontSize){
+      area.style.setProperty('font-size',compactFont+'pt','important');
+      lines=countLines(compactFont*96/72);
+    }
+    totalLines+=lines;
+    const lh=Math.max(2.7,compactFont*0.3528*1.25);
+    const verticalPadding=lines>9?1.0:lines>5?1.4:2.0;
+    const height=Math.max(15,lines*lh+verticalPadding);
+    area.style.setProperty('height',height+'mm','important');
+    area.style.setProperty('min-height',height+'mm','important');
+    area.style.setProperty('max-height','none','important');
+    area.style.setProperty('overflow','visible','important');
+    area.style.setProperty('resize','none','important');
+    card.style.setProperty('padding',lines>9?'0.8mm 1mm':lines>5?'1.2mm 1.5mm':'2mm','important');
+    card.style.setProperty('margin','0','important');
+    card.style.setProperty('break-inside','avoid','important');
+  });
+  const weeks=root.querySelector('#weeks');
+  if(weeks){
+    const density=totalLines>28?0.8:totalLines>20?1.2:2;
+    weeks.style.setProperty('gap',density+'mm 2mm','important');
+    const panel=weeks.closest('.panel');
+    if(panel)panel.style.setProperty('padding',totalLines>28?'0 0 1mm':totalLines>20?'0 0 2mm':'0','important');
+  }
+}
 function showPDFReady(blob,filename){
   pendingPDF={blob,filename};
   document.getElementById('pdfReadyDialog')?.remove();
@@ -246,6 +301,7 @@ async function requestPDF(){
   stage.style.cssText='position:fixed;inset:0;overflow:auto;background:#fff;z-index:9998;padding:0;display:flex;justify-content:center';
   clone.style.cssText='width:718px;max-width:none;margin:0;padding:0;background:#fff;flex:none';
   stage.appendChild(style);stage.appendChild(clone);document.body.appendChild(stage);
+  fitWeeklyPDF(clone);
   const busy=document.createElement('div');busy.textContent='PDFを作成しています…';
   busy.style.cssText='position:fixed;inset:0;z-index:9999;background:#17203388;color:white;display:grid;place-items:center;font-weight:700;font-size:18px';
   document.body.appendChild(busy);
