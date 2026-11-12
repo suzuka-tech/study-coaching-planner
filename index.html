@@ -192,8 +192,20 @@ function fitPrintTextareas(root){
     area.style.setProperty('white-space','pre-wrap','important');
     area.style.setProperty('overflow-wrap','anywhere','important');
     area.style.setProperty('word-break','break-word','important');
-    // Read after the height reset so scrollHeight reflects every explicit newline and wrapped line.
-    const height=Math.max(24,area.scrollHeight+(area.closest('#weeks')?0:4));
+    // Measure weekly text in a normal element so iOS Safari does not retain the textarea's oversized internal canvas.
+    let height;
+    if(area.closest('#weeks')){
+      const style=getComputedStyle(area);
+      const measure=document.createElement('div');
+      measure.textContent=area.value||' ';
+      measure.style.cssText='position:absolute;visibility:hidden;left:-10000px;top:0;box-sizing:border-box;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;';
+      ['width','fontFamily','fontSize','fontWeight','fontStyle','lineHeight','letterSpacing','paddingTop','paddingRight','paddingBottom','paddingLeft','borderTopWidth','borderRightWidth','borderBottomWidth','borderLeftWidth','boxSizing'].forEach(k=>measure.style[k]=style[k]);
+      document.body.appendChild(measure);
+      height=Math.max(24,Math.ceil(measure.getBoundingClientRect().height));
+      measure.remove();
+    }else{
+      height=Math.max(24,area.scrollHeight+4);
+    }
     area.style.setProperty('height',height+'px','important');
   });
 }
