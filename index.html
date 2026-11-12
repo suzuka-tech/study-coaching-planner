@@ -46,7 +46,7 @@ h2{font-size:11pt;margin:0 0 2mm;padding:0 0 1.5mm;border-bottom:1px solid #9aa5
 #app>.print-page-one #weeks .weekhead{margin-bottom:1mm}
 #app>.print-page-one #weeks .weekhead b{font-size:8pt}
 #app>.print-page-one #weeks .tag{font-size:6.5pt;padding:.5mm 1.5mm}
-#app>.print-page-one #weeks textarea{display:block;width:100%;height:auto!important;min-height:10mm;max-height:none;resize:none;white-space:pre-wrap;overflow:visible;overflow-wrap:anywhere;word-break:break-word;line-height:1.25}
+#app>.print-page-one #weeks textarea{display:block;width:100%;height:auto!important;min-height:0!important;max-height:none;resize:none;padding:0!important;border:0;border-bottom:1px solid #c8ced8;border-radius:0;background:transparent;white-space:pre-wrap;overflow:visible;overflow-wrap:anywhere;word-break:break-word;line-height:1.25}
 #app>.print-page-one #duration{font-size:7pt;padding:1.5mm;margin-bottom:2mm}
 #app>.print-page-one{page-break-after:always;break-after:page}
 #app>.print-page-two{height:auto;min-height:0;page-break-after:auto;break-after:auto}
@@ -199,9 +199,10 @@ function fitPrintTextareas(root){
       const measure=document.createElement('div');
       measure.textContent=area.value||' ';
       measure.style.cssText='position:absolute;visibility:hidden;left:-10000px;top:0;box-sizing:border-box;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;';
-      ['width','fontFamily','fontSize','fontWeight','fontStyle','lineHeight','letterSpacing','paddingTop','paddingRight','paddingBottom','paddingLeft','borderTopWidth','borderRightWidth','borderBottomWidth','borderLeftWidth','boxSizing'].forEach(k=>measure.style[k]=style[k]);
+      ['fontFamily','fontSize','fontWeight','fontStyle','lineHeight','letterSpacing','boxSizing'].forEach(k=>measure.style[k]=style[k]);
+      measure.style.width=area.getBoundingClientRect().width+'px';
       document.body.appendChild(measure);
-      height=Math.max(24,Math.ceil(measure.getBoundingClientRect().height));
+      height=Math.max(14,Math.ceil(measure.getBoundingClientRect().height));
       measure.remove();
     }else{
       height=Math.max(24,area.scrollHeight+4);
