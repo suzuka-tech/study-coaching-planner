@@ -4,11 +4,12 @@
 :root{--ink:#202633;--muted:#687386;--line:#dfe4eb;--bg:#f4f6f8;--blue:#365f91;--soft:#edf3f9}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Yu Gothic",Meiryo,sans-serif}header{position:sticky;top:0;background:white;border-bottom:1px solid var(--line);padding:13px 18px;z-index:2}.top,.between{display:flex;justify-content:space-between;align-items:center;gap:10px}.top{max-width:1100px;margin:auto}.brand{font-weight:750}.brand small{display:block;color:var(--muted);font-size:11px;font-weight:400}.wrap{max-width:1100px;margin:20px auto;padding:0 15px 45px}.layout{display:grid;grid-template-columns:235px minmax(0,1fr);gap:16px}aside,.panel{background:white;border:1px solid var(--line);border-radius:13px}aside{padding:13px;height:max-content;position:sticky;top:78px}.panel{padding:18px;margin-bottom:14px}h2{font-size:18px;margin:0 0 13px}.hint,.sub{font-size:12px;color:var(--muted)}.sub{margin:-7px 0 13px}.list{display:grid;gap:7px;margin:10px 0}.student-row{display:flex;gap:5px;align-items:stretch;min-width:0}.student-row .student{flex:1;min-width:0}.student{background:white;border:1px solid var(--line);border-radius:8px;padding:10px;text-align:left}.student.active{border-color:var(--blue);background:var(--soft)}.student small{display:block;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:grid;gap:4px;min-width:0}.field.full{grid-column:1/-1}label{font-size:13px;font-weight:650;color:#465164}input,select,textarea{width:100%;min-width:0;padding:10px 11px;border:1px solid #ccd4df;border-radius:8px;font:inherit;color:var(--ink);background:white}textarea{min-height:66px}#subjectCards .field{align-content:start;gap:5px;margin-top:8px}#subjectCards textarea[data-weak]{display:block;width:100%;min-height:42px;height:42px;box-sizing:border-box;padding:9px 11px;line-height:1.45;vertical-align:top;resize:none;overflow:hidden;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}button{font:inherit;cursor:pointer}.btn{padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:white;color:var(--ink);font-weight:650}.primary{background:var(--blue);border-color:var(--blue);color:white}.danger{color:#a33}.small{font-size:12px;padding:6px 9px}.actions{display:flex;gap:7px;flex-wrap:wrap;align-items:center}.tag{background:var(--soft);color:#355a80;padding:3px 8px;border-radius:20px;font-size:11px}.card{border:1px solid var(--line);border-radius:9px;padding:11px;margin:9px 0}.weekhead{display:flex;justify-content:space-between;gap:8px;margin-bottom:7px}.days{display:grid;gap:8px}.day{display:grid;grid-template-columns:115px 1fr;gap:10px;border:1px solid var(--line);border-radius:9px;padding:10px}.day strong{font-size:13px}.day small{display:block;color:var(--muted)}.notice{background:#f6f8fb;border:1px solid var(--line);padding:10px;border-radius:8px;font-size:12px;color:#566174}.empty{color:var(--muted);padding:20px;text-align:center}#toast{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);background:#202633;color:white;padding:9px 15px;border-radius:20px;display:none}.modal-backdrop{position:fixed;inset:0;background:#17203388;z-index:10;display:grid;place-items:center;padding:18px}.modal{background:white;border-radius:14px;padding:20px;width:min(100%,380px);box-shadow:0 12px 40px #0003}.modal h2{margin:0 0 12px}.modal[hidden],.modal-backdrop[hidden]{display:none}
 @media(max-width:740px){.layout{grid-template-columns:1fr}aside{position:static}.list{grid-template-columns:repeat(2,minmax(0,1fr));max-height:170px;overflow:auto}.grid{grid-template-columns:1fr}.field.full{grid-column:auto}.panel{padding:14px}.day{grid-template-columns:1fr;gap:5px}.top{align-items:flex-start}.top .actions .btn{font-size:12px;padding:7px}}
 @media print{
-@page{size:A4;margin:10mm}
-html,body{width:auto!important;max-width:none!important;margin:0!important;padding:0!important;overflow:visible!important}
-.wrap,.layout,#app,.print-page,.panel{width:100%!important;max-width:none!important;margin-left:0!important;margin-right:0!important}
-#app{display:block!important;position:static!important;transform:none!important;zoom:1!important}
-.print-page,.panel{box-sizing:border-box!important}
+@page{size:A4 portrait;margin:12mm}
+html,body{width:186mm!important;max-width:186mm!important;margin:0!important;padding:0!important;overflow:visible!important}
+body{box-sizing:border-box!important}
+.wrap,.layout,#app,.print-page,.panel{width:186mm!important;max-width:186mm!important;min-width:0!important;margin-left:0!important;margin-right:0!important;padding-left:0!important;padding-right:0!important}
+#app{display:block!important;position:static!important;transform:none!important;zoom:1!important;left:auto!important}
+.print-page,.panel{box-sizing:border-box!important;min-width:0!important}
 
 body{background:#fff;font-size:8.5pt;line-height:1.3;color:#202633}
 header,aside,.no-print,#toast{display:none!important}
@@ -38,14 +39,14 @@ h2{font-size:11pt;margin:0 0 2mm;padding:0 0 1.5mm;border-bottom:1px solid #9aa5
 #app>.print-page-one #subjectCards b{font-size:8pt}
 #app>.print-page-one #subjectCards .field{display:grid;grid-template-columns:22mm 1fr;align-items:center;gap:1mm;margin-top:.5mm}
 #app>.print-page-one #subjectCards label{font-size:6.8pt;white-space:nowrap}
-#app>.print-page-one #subjectCards input{width:100%;font-size:7pt;padding:.5mm 1mm}
-#app>.print-page-one #subjectCards textarea[data-weak]{width:100%;min-height:7mm;height:auto;font-size:7pt;line-height:1.25;padding:.5mm 1mm;resize:none;overflow:visible;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;border:0;border-bottom:1px solid #c8ced8;border-radius:0;background:transparent}
+#app>.print-page-one #subjectCards input,#app>.print-page-one #subjectCards textarea[data-goal]{width:100%;font-size:7pt;padding:.5mm 1mm;min-height:0;height:auto;white-space:pre-wrap;overflow:visible;overflow-wrap:anywhere;word-break:break-word}
+#app>.print-page-one #subjectCards textarea[data-weak]{width:100%;min-height:7mm;height:auto!important;max-height:none;font-size:7pt;line-height:1.25;padding:.5mm 1mm;resize:none;overflow:visible;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;border:0;border-bottom:1px solid #c8ced8;border-radius:0;background:transparent}
 #app>.print-page-one #weeks{display:grid;grid-template-columns:1fr 1fr;gap:2mm 3mm}
 #app>.print-page-one #weeks .card{margin:0;padding:2mm;border:1px solid #d9dee6;border-radius:2mm;break-inside:avoid}
 #app>.print-page-one #weeks .weekhead{margin-bottom:1mm}
 #app>.print-page-one #weeks .weekhead b{font-size:8pt}
 #app>.print-page-one #weeks .tag{font-size:6.5pt;padding:.5mm 1.5mm}
-#app>.print-page-one #weeks textarea{width:100%;height:15mm;min-height:15mm;resize:none;white-space:pre-wrap;overflow:hidden}
+#app>.print-page-one #weeks textarea{display:block;width:100%;height:auto!important;min-height:10mm;max-height:none;resize:none;white-space:pre-wrap;overflow:visible;overflow-wrap:anywhere;word-break:break-word;line-height:1.25}
 #app>.print-page-one #duration{font-size:7pt;padding:1.5mm;margin-bottom:2mm}
 #app>.print-page-one{page-break-after:always;break-after:page}
 #app>.print-page-two{height:auto;min-height:0;page-break-after:auto;break-after:auto}
@@ -55,7 +56,7 @@ h2{font-size:11pt;margin:0 0 2mm;padding:0 0 1.5mm;border-bottom:1px solid #9aa5
 #app>.print-page-two .day{grid-template-columns:34mm 1fr;gap:4mm;align-items:start;margin:0;padding:3mm;border:1px solid #d9dee6;border-radius:2mm;min-height:29mm;break-inside:avoid}
 #app>.print-page-two .day strong{font-size:9pt}
 #app>.print-page-two .day small{font-size:7pt}
-#app>.print-page-two .day textarea{height:22mm;min-height:22mm;resize:none;overflow:visible;border:0;padding:1mm;font-size:8.5pt;white-space:pre-wrap}
+#app>.print-page-two .day textarea{height:auto!important;min-height:10mm;max-height:none;resize:none;overflow:visible;border:0;padding:1mm;font-size:8.5pt;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
 #app.many-subjects>.print-page-one{page-break-after:auto;break-after:auto}
 #app.many-subjects .weekly-page-break{page-break-before:always;break-before:page}
 #app.many-subjects>.print-page-two{page-break-before:always;break-before:page}
@@ -66,7 +67,6 @@ input,textarea,select{color:#202633}
 <header><div class="top"><div class="brand">学習計画コーチング<small>生徒ごとのテスト対策・週間計画</small></div><div class="actions no-print"><button class="btn" id="export">データ書き出し</button><button class="btn" id="import">データ読み込み</button><input type="file" id="file" accept="application/json" hidden><button class="btn primary" id="pdf">PDFを出力</button></div></div></header>
 <div class="wrap"><div class="layout"><aside class="no-print"><div class="between"><b>生徒一覧</b><button class="btn primary small" id="addStudent" type="button">＋ 生徒追加</button></div><div class="list" id="students"></div><p class="hint">生徒を選択して計画を管理します。</p></aside><main id="app"><div class="panel empty">生徒を追加してください。</div></main></div></div><div id="toast"></div><div class="modal-backdrop" id="studentModal" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="studentModalTitle"><h2 id="studentModalTitle">生徒を追加</h2><div class="field"><label for="studentName">生徒氏名</label><input id="studentName" type="text" autocomplete="name" placeholder="例：山田 花子"></div><div class="actions" style="justify-content:flex-end;margin-top:14px"><button class="btn" id="cancelStudent" type="button">キャンセル</button><button class="btn primary" id="confirmStudent" type="button">追加する</button></div></section></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js"></script>
 <script>
 const $=s=>document.querySelector(s), KEY='study_coaching_planner_v1';
 let db=read(), sid=null, tid=null, editingStudentId=null;
@@ -104,7 +104,7 @@ function render(){
   const subjectCards = t.subjects.length
     ? t.subjects.map((x,i)=>
       '<div class="card"><div class="between"><b>'+esc(x)+'</b><button type="button" class="btn small danger no-print" data-remove="'+i+'">削除</button></div>'+
-      '<div class="field"><label>目標</label><input data-goal="'+i+'" '+((t.goals[x]||'')? 'value="'+esc(t.goals[x])+'" ':'')+'placeholder="達成したい目標"></div>'+
+      '<div class="field"><label>目標</label><textarea rows="2" data-goal="'+i+'" placeholder="達成したい目標">'+esc(t.goals[x]||'')+'</textarea></div>'+
       '<div class="field"><label>重点・苦手分野（任意）</label><textarea rows="1" data-weak="'+i+'" placeholder="重点的に復習する単元">'+esc(t.weak[x]||'')+'</textarea></div></div>'
     ).join('')
     : '<p class="hint">上のボタンから今回のテストで使う科目を選択してください。</p>';
@@ -179,105 +179,27 @@ function render(){
   }
   $('#save').onclick=()=>{sync();save()};
   $('#print').onclick=()=>{sync();requestPDF()};
-  window.onbeforeprint=()=>{sync();const many=t.subjects.length>=7;$("#app").classList.toggle("many-subjects",many);$("#weeks")?.closest(".panel")?.classList.toggle("weekly-page-break",many);fitWeeklyPDF($("#app"))};window.onafterprint=()=>{$("#app").classList.remove("many-subjects");$("#weeks")?.closest(".panel")?.classList.remove("weekly-page-break")};
+  window.onbeforeprint=()=>{sync();const many=t.subjects.length>=7;$("#app").classList.toggle("many-subjects",many);$("#weeks")?.closest(".panel")?.classList.toggle("weekly-page-break",many);fitPrintTextareas($("#app"))};window.onafterprint=()=>{$("#app").classList.remove("many-subjects");$("#weeks")?.closest(".panel")?.classList.remove("weekly-page-break")};
 }
-let pendingPDF=null;
-function fitWeeklyPDF(root){
+function fitPrintTextareas(root){
   if(!root)return;
-  root.querySelectorAll('#weeks textarea[data-week]').forEach(area=>{
+  root.querySelectorAll('textarea').forEach(area=>{
     area.style.setProperty('height','auto','important');
-    area.style.setProperty('min-height','15mm','important');
+    area.style.setProperty('min-height','0','important');
     area.style.setProperty('max-height','none','important');
     area.style.setProperty('overflow','visible','important');
     area.style.setProperty('white-space','pre-wrap','important');
     area.style.setProperty('overflow-wrap','anywhere','important');
     area.style.setProperty('word-break','break-word','important');
-    const contentHeight=area.scrollHeight*25.4/96;
-    const height=Math.max(15,contentHeight+1.5);
-    area.style.setProperty('height',height+'mm','important');
-    const card=area.closest('.card');
-    if(card){
-      card.style.setProperty('padding',height>42?'0.8mm 1mm':height>27?'1.2mm 1.5mm':'2mm','important');
-      card.style.setProperty('margin','0','important');
-      card.style.setProperty('break-inside','avoid','important');
-    }
+    // Read after the height reset so scrollHeight reflects every explicit newline and wrapped line.
+    const height=Math.max(24,area.scrollHeight+4);
+    area.style.setProperty('height',height+'px','important');
   });
-  const weeks=root.querySelector('#weeks');
-  if(weeks)weeks.style.setProperty('gap','1.5mm 2mm','important');
 }
-
-async function saveGeneratedPDF(blob,filename){
-  const file=new File([blob],filename,{type:'application/pdf'});
-  try{
-    if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){
-      await navigator.share({files:[file],title:filename});
-      return;
-    }
-  }catch(error){
-    if(error?.name==='AbortError')return;
-  }
-  const url=URL.createObjectURL(blob);
-  const link=document.createElement('a');
-  link.href=url;link.download=filename;link.style.display='none';
-  document.body.appendChild(link);link.click();link.remove();
-  setTimeout(()=>URL.revokeObjectURL(url),60000);
-  msg('PDFを保存しました');
-}
-
-async function requestPDF(){
+function requestPDF(){
   if(!test()){msg('テスト計画を選択してください');return}
-  const ua=navigator.userAgent||'';
-  const safari=/Safari/i.test(ua)&&!/Chrome|CriOS|Edg|OPR|FxiOS|Firefox|Android/i.test(ua);
-  if(safari){window.print();return}
-  if(typeof html2pdf!=='function'){window.print();return}
-  const source=$('#app');
-  const clone=source.cloneNode(true);
-  const many=test().subjects.length>=7;
-  clone.classList.toggle('many-subjects',many);
-  clone.querySelectorAll('.no-print').forEach(e=>e.remove());
-  if(many)clone.querySelector('#weeks')?.closest('.panel')?.classList.add('weekly-page-break');
-  const originalFields=source.querySelectorAll('input,textarea,select');
-  const copiedFields=clone.querySelectorAll('input,textarea,select');
-  originalFields.forEach((field,i)=>{
-    const copy=copiedFields[i];if(!copy)return;
-    if(field.tagName==='TEXTAREA')copy.value=field.value;
-    else if(field.tagName==='SELECT')Array.from(copy.options).forEach((o,j)=>o.selected=field.options[j]?.selected);
-    else copy.setAttribute('value',field.value);
-  });
-  const baseRules=[],printRules=[];
-  function collectPrint(rules){for(const rule of rules){if(rule.type===CSSRule.MEDIA_RULE)collectPrint(rule.cssRules);else if(rule.type===CSSRule.STYLE_RULE||rule.type===CSSRule.FONT_FACE_RULE)printRules.push(rule.cssText)}}
-  function collect(rules){for(const rule of rules){if(rule.type===CSSRule.MEDIA_RULE){if(rule.conditionText.includes('print'))collectPrint(rule.cssRules)}else if(rule.type===CSSRule.STYLE_RULE||rule.type===CSSRule.FONT_FACE_RULE)baseRules.push(rule.cssText)}}
-  Array.from(document.styleSheets).forEach(sheet=>{try{collect(sheet.cssRules)}catch(e){}});
-  const style=document.createElement('style');
-  style.textContent=baseRules.join('\n')+'\n'+printRules.join('\n')+
-    '\nhtml,body{width:auto!important;max-width:none!important;margin:0!important;padding:0!important;background:#fff!important;overflow:visible!important}'+
-    '\n#app{display:block!important;width:190mm!important;max-width:190mm!important;margin:0!important;padding:0!important;transform:none!important;zoom:1!important}'+
-    '\n.print-page,.panel{width:100%!important;max-width:100%!important;box-sizing:border-box!important}'+
-    '\n.print-page{height:auto!important;min-height:0!important;overflow:visible!important}'+
-    '\n.print-page-two{height:auto!important;min-height:0!important}';
-  const stage=document.createElement('div');
-  stage.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;overflow:auto;background:#fff;z-index:9998;padding:0;display:block';
-  clone.style.cssText='display:block;width:190mm;max-width:190mm;margin:0;padding:0;background:#fff;box-sizing:border-box';
-  stage.appendChild(style);stage.appendChild(clone);document.body.appendChild(stage);
-  fitWeeklyPDF(clone);
-  const busy=document.createElement('div');busy.textContent='PDFを作成しています…';
-  busy.style.cssText='position:fixed;inset:0;z-index:9999;background:#17203388;color:white;display:grid;place-items:center;font-weight:700;font-size:18px';
-  document.body.appendChild(busy);
-  try{
-    if(document.fonts?.ready)await document.fonts.ready;
-    const filename=(test().title||'学習計画表').replace(/[\\/:*?"<>|]/g,'_')+'.pdf';
-    const blob=await html2pdf().set({
-      margin:[10,10,10,10],
-      image:{type:'jpeg',quality:0.96},
-      html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff',windowWidth:794,windowHeight:1123,scrollX:0,scrollY:0},
-      jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
-      pagebreak:{mode:['css','legacy']}
-    }).from(clone).outputPdf('blob');
-    await saveGeneratedPDF(blob,filename);
-  }catch(error){
-    console.error(error);
-    alert('PDFの作成に失敗しました。通信環境を確認して、もう一度お試しください。');
-  }finally{stage.remove();busy.remove()}
+  // Use the browser's native print dialog directly on every platform.
+  window.print();
 }
 $('#pdf').onclick=requestPDF;
 $('#export').onclick=()=>{let a=document.createElement('a'),b=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});a.href=URL.createObjectURL(b);a.download='学習計画データ.json';a.click();URL.revokeObjectURL(a.href)};
