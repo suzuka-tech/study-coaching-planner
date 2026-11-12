@@ -184,6 +184,7 @@ function render(){
 function fitPrintTextareas(root){
   if(!root)return;
   root.querySelectorAll('textarea').forEach(area=>{
+    if(area.closest('#weeks')) area.rows=1;
     area.style.setProperty('height','auto','important');
     area.style.setProperty('min-height','0','important');
     area.style.setProperty('max-height','none','important');
